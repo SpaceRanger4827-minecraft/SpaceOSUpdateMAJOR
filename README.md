@@ -1,0 +1,3 @@
+--This is a major update to SpaceOS . . .
+--Written by SpaceRanger4827
+--Written in LUA ( COMPUTERCRAFT MINECRAFT MOD )
