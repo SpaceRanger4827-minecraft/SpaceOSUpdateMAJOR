@@ -1,0 +1,157 @@
+-- Blocks CTRL T DON'T TOUCH
+os.pullEvent = os.pullEventRaw
+
+--Varibles
+  version = "1.0"
+  
+  -- DONT TOUCH THIS
+  running = true
+  
+  --YOU CAN TOUCH THIS Colors
+  colTaskBar = colors.red
+  colBackground = colors.gray
+  
+  --Images
+  _dt = paintutils.loadImage("/.os/.backgrounds/desktop")
+ 
+ 
+  --Booleans
+  _ms = 0
+  _rcm = 0
+--Functions
+  clear = function()
+    term.setBackgroundColor(colors.black)
+    term.clear()
+    term.setCursorPos(1, 1)
+  end
+  
+  redraw = function()
+    drawDeskTop()
+    drawTaskBar()
+  end
+  
+  drawMenu1 = function()
+    term.setCursorPos(1, 18)
+    term.setBackgroundColor( colors.white )
+    term.setTextColor( colors.red )
+    print( "[POWER]" )
+    term.setCursorPos(1,3)
+    term.write("[Re-Boot]")
+  end
+  
+  reload = function()
+    stop()
+    clear()
+    running = false
+    shell.run("/.os/.gui")
+  end
+
+  rightClickMenu = function(x, y)
+    term.setBackgroundColor( colTaskBar )
+    term.setTextColor( colors.lime )
+    term.setCursorPos( x,y )
+    term.write(" [ LUA ] ")
+    term.setCursorPos(x,y+1)
+    term.write(" [ Developer Editor ] ")
+    term.setCursorPos(x, y+2)
+    term.setTextColor(colors.lime)
+    term.write(" [ Re-Boot ] ")
+    local charLength = 11
+    local event, button, xPos, yPos = os.pullEvent("mouse_click")
+    while true do
+      if button == 1 and yPos == y and xPos <= (x+charLength) and xPos >= x then
+        running = false
+        clear()
+        term.setTextColor( colors.red )
+        print("Gone into Command Prompt...")
+        print("Any function of the PS is in the LUE functions now")
+        shell.run("lua")
+        os.reboot()
+        break
+     elseif button == 1 and yPos == (y+1) and xPos <= (x+7) and xPos >= x then
+        shell.run("edit", "/.os/.gui")
+        _rcm = 0
+        _ms = 0
+        reload()
+        break
+     elseif button == 1 and yPos == (y+2) and xPos <= (x+charLength) then
+       term.setBackgroundColor( colors.red )
+       term.setTextColor( colors.blue )
+       term.clear()
+       term.setCursorPos(5, 5)
+       print("Re-Booting ")
+       textutils.slowWrite(".   .   .  ")
+       os.reboot()
+       break
+     else
+        redraw()
+        reload()
+        break
+    end
+    _rcm = 0
+  end
+end
+
+    
+  drawTaskBar = function()
+    term.setCursorPos(1, 19)
+    term.setBackgroundColor( colTaskBar )
+    term.clearLine()
+    term.setCursorPos(1, 19)
+    term.setBackgroundColor( colors.orange )
+    term.setTextColor( colors.white )
+    term.write("[ MENU ]")
+  end
+ 
+  drawDeskTop = function()
+    term.setBackgroundColor( colBackground )
+    term.clear()
+    term.setCursorPos(1, 1)
+    paintutils.drawImage(_dt, 1, 1)
+  end
+  
+  
+  
+  stop = function()
+    clear()
+    running = false
+    term.setTextColor( colors.orange )
+    print("Thank you")
+  end  
+ 
+  runTime = function()
+    while running do
+      event, button, x, y = os.pullEvent("mouse_click")
+      if _ms == 0 and button == 1 and x < 7 and y == 19 then
+        drawMenu1()
+        _ms = 1
+      elseif _ms == 1 and button == 1 and y == 18 and x < 7 then
+        stop()
+      elseif _ms == 1 and button == 1 and x < 7 and y == 19 then
+        init()
+      elseif _ms == 0 and _rcm == 0 and button == 2 then
+        rightClickMenu(x, y)
+        _rcm = 1
+      elseif _ms == 1 and button == 1 and x < 9 and y == 3 then
+        clear()
+        term.setBackgroundColor(colors.cyan)
+        term.clear()
+        term.setCursorPos(1,1)
+        term.setTextColor(colors.lime)
+        term.write("ReBooting")
+        os.reboot()
+      end
+    end
+  end
+ 
+ 
+  init = function()
+    _ms = 0
+    drawDeskTop()
+    drawTaskBar()
+    runTime()
+  end
+ 
+ 
+--Main Stuff
+init()
